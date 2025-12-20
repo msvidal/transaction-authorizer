@@ -6,9 +6,10 @@ import com.github.msvidal.transactionauthorizer.domain.model.TransactionResult;
 import com.github.msvidal.transactionauthorizer.domain.service.TransactionStrategyFactory;
 import com.github.msvidal.transactionauthorizer.domain.repository.AccountRepository;
 import com.github.msvidal.transactionauthorizer.domain.repository.TransactionRepository;
-import jakarta.persistence.OptimisticLockException;
 import lombok.AllArgsConstructor;
-import org.springframework.resilience.annotation.Retryable;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,11 @@ public class ProcessTransactionUseCase {
     private final TransactionRepository transactionRepository;
 
     @Transactional
-    @Retryable(includes = OptimisticLockException.class)
+    @Retryable(
+            value = {ObjectOptimisticLockingFailureException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 50, multiplier = 2)
+    )
     public TransactionResult execute(Transaction transaction) {
         var accountOpt = accountRepository.findById(transaction.accountId());
 
