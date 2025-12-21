@@ -31,7 +31,10 @@ public class TransactionController {
 
     private final ProcessTransactionUseCase processTransactionUseCase;
 
-    @Operation(summary = "Autorizar transação", description = "Processa uma operação de débito ou crédito em conta de forma idempotente.")
+    @Operation(
+            summary = "Autorizar transação",
+            description = "Processa uma operação de débito ou crédito em conta de forma idempotente."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transação processada (Aprovada ou Recusada)",
                     content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
@@ -45,16 +48,30 @@ public class TransactionController {
             @RequestBody @Valid TransactionRequest request) {
 
         log.info("Recebida requisição de transação - ID: {}, Conta: {}, Valor: {}, Tipo: {}",
-                transactionId, request.accountId(), request.amount().value(), request.operation());
+                transactionId,
+                request.accountId(),
+                request.amount() != null ? request.amount().value() : null,
+                request.operation());
 
         var amount = request.amount().value();
         var currency = Currency.getInstance(request.amount().currency());
         var operation = TransactionType.fromString(request.operation());
 
-        var transaction = new Transaction(transactionId, request.accountId(), new MonetaryAmount(amount, currency),
-                operation, null, null);
+        var transaction = new Transaction(
+                transactionId,
+                request.accountId(),
+                new MonetaryAmount(amount, currency),
+                operation,
+                null,
+                null
+        );
 
         var transactionResult = processTransactionUseCase.execute(transaction);
+
+        if (transactionResult == null) {
+            log.warn("Use case retornou null para a transação ID: {}", transactionId);
+            return ResponseEntity.badRequest().build();
+        }
 
         TransactionResponse response = TransactionResponse.toResponse(transactionResult);
 
