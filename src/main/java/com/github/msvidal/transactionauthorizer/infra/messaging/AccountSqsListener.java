@@ -18,7 +18,7 @@ import java.util.Currency;
 
 @Component
 @AllArgsConstructor
-@Profile("listener")
+@Profile({"listener","local"})
 public class AccountSqsListener {
 
     private static final Logger log = LoggerFactory.getLogger(AccountSqsListener.class);
