@@ -1,8 +1,6 @@
-# Validação de Saldos - Teste de Carga 20/12/2025
+# Validação de Saldos - Teste de Carga 21/12/2025
 
-## ✅ Resultado:  **100% CORRETO - INTEGRIDADE GARANTIDA**
-
-Data da Validação: 2025-12-20  
+Data da Validação: 2025-12-21  
 Teste Relacionado: [2025-12-20-pool-accounts.md](2025-12-20-pool-accounts. md)
 
 ---
@@ -13,24 +11,24 @@ Teste Relacionado: [2025-12-20-pool-accounts.md](2025-12-20-pool-accounts. md)
 
 | Métrica | Valor |
 |---------|-------|
-| **Contas Validadas** | 5 |
-| **Transações Registradas** | 142.591 |
-| **Transações Esperadas (k6)** | 142.591 ✅ |
-| **Discrepâncias Encontradas** | 0 ✅ |
-| **Taxa de Acurácia** | 100% |
+| **Contas Validadas**          | 5       |
+| **Transações Registradas**    | 142.591 |
+| **Transações Esperadas**      | 142.591 |
+| **Discrepâncias Encontradas** | 0       |
+| **Taxa de Acurácia**          | 100%    |
 
 ### Totais Financeiros
 
 | Item | Valor (BRL) |
 |------|-------------|
-| Saldo Inicial Total | 5.000,00 |
-| Total de Créditos | +712.490,00 |
-| Total de Débitos | -356.710,00 |
-| **Variação Líquida** | **+355.780,00** |
-| **Saldo Final Total** | **360.780,00** ✅ |
+| Saldo Inicial Total   | 5.000,00        |
+| Total de Créditos     | +712.490,00     |
+| Total de Débitos      | -356.710,00     |
+| **Variação Líquida**  | **+355.780,00** |
+| **Saldo Final Total** | **360.780,00**  |
 
 **Validação Matemática:**  
-`5.000 + 712.490 - 356.710 = 360.780` ✅
+`5.000 + 712.490 - 356.710 = 360.780` 
 
 ---
 
@@ -40,15 +38,15 @@ Teste Relacionado: [2025-12-20-pool-accounts.md](2025-12-20-pool-accounts. md)
 
 ```
 Saldo Inicial:      1.000,00 BRL
-Créditos:       +141.730,00 BRL (14.173 transações)
-Débitos:         -71.090,00 BRL (14.218 transações)
+Créditos:        +141.730,00 BRL (14.173 transações)
+Débitos:          -71.090,00 BRL (14.218 transações)
 ────────────────────────────────
-Saldo Final:      71.640,00 BRL ✅
-Versão:           28.391
-Total Transações: 28.391
+Saldo Final:       71.640,00 BRL 
+Versão:            28.391
+Total Transações:  28.391
 ```
 
-**Cálculo:** `1.000 + 141.730 - 71.090 = 71.640` ✅
+**Cálculo:** `1.000 + 141.730 - 71.090 = 71.640`
 
 ---
 
@@ -59,12 +57,12 @@ Saldo Inicial:     1.000,00 BRL
 Créditos:       +141.150,00 BRL (14.115 transações)
 Débitos:         -71.580,00 BRL (14.316 transações)
 ────────────────────────────────
-Saldo Final:      70.570,00 BRL ✅
+Saldo Final:      70.570,00 BRL 
 Versão:           28.431
 Total Transações: 28.431
 ```
 
-**Cálculo:** `1.000 + 141.150 - 71.580 = 70.570` ✅
+**Cálculo:** `1.000 + 141.150 - 71.580 = 70.570` 
 
 ---
 
@@ -75,12 +73,12 @@ Saldo Inicial:     1.000,00 BRL
 Créditos:       +143.620,00 BRL (14.362 transações)
 Débitos:         -70.960,00 BRL (14.192 transações)
 ────────────────────────────────
-Saldo Final:      73.660,00 BRL ✅
+Saldo Final:      73.660,00 BRL 
 Versão:           28.554
 Total Transações: 28.554
 ```
 
-**Cálculo:** `1.000 + 143.620 - 70.960 = 73.660` ✅
+**Cálculo:** `1.000 + 143.620 - 70.960 = 73.660` 
 
 ---
 
@@ -91,28 +89,28 @@ Saldo Inicial:     1.000,00 BRL
 Créditos:       +141.870,00 BRL (14.187 transações)
 Débitos:         -71.750,00 BRL (14.350 transações)
 ────────────────────────────────
-Saldo Final:      71.120,00 BRL ✅
+Saldo Final:      71.120,00 BRL 
 Versão:           28.537
 Total Transações: 28.537
 ```
 
-**Cálculo:** `1.000 + 141.870 - 71.750 = 71.120` ✅
+**Cálculo:** `1.000 + 141.870 - 71.750 = 71.120` 
 
 ---
 
 ### Conta 5: `de71d27e-97d0-4806-8ecf-4a9187e71790`
 
 ```
-Saldo Inicial:     1.000,00 BRL
+Saldo Inicial:      1.000,00 BRL
 Créditos:        +144.120,00 BRL (14.412 transações)
-Débitos:         -71.330,00 BRL (14.266 transações)
+Débitos:          -71.330,00 BRL (14.266 transações)
 ────────────────────────────────
-Saldo Final:       73.790,00 BRL ✅
-Versão:           28.678
-Total Transações: 28.678
+Saldo Final:       73.790,00 BRL
+Versão:            28.678
+Total Transações:  28.678
 ```
 
-**Cálculo:** `1.000 + 144.120 - 71.330 = 73.790` ✅
+**Cálculo:** `1.000 + 144.120 - 71.330 = 73.790`
 
 ---
 
@@ -121,23 +119,23 @@ Total Transações: 28.678
 ### Distribuição de Transações por Conta
 
 ```
-Conta 1: 28.391 tx (19.91%)  ████████████████████
-Conta 2: 28.431 tx (19.94%)  ████████████████████
-Conta 3: 28.554 tx (20.02%)  ████████████████████
-Conta 4: 28.537 tx (20.01%)  ████████████████████
-Conta 5: 28.678 tx (20.11%)  ████████████████████
+Conta 1: 28.391 tx (19.91%)  
+Conta 2: 28.431 tx (19.94%)  
+Conta 3: 28.554 tx (20.02%)  
+Conta 4: 28.537 tx (20.01%)  
+Conta 5: 28.678 tx (20.11%)  
 ```
 
-**Análise:** Distribuição uniforme (~20% cada) demonstra que o teste foi equilibrado.  ✅
+**Análise:** Distribuição uniforme (~20% cada) demonstra que o teste foi equilibrado.
 
 ### Distribuição CREDIT vs DEBIT
 
 ```
-CREDIT: 71.249 (49.98%)  ██████████████████████████
-DEBIT:   71.342 (50.02%)  ██████████████████████████
+CREDIT: 71.249 (49.98%)  
+DEBIT:   71.342 (50.02%)  
 ```
 
-**Análise:** Distribuição praticamente 50/50, conforme esperado no código k6. ✅
+**Análise:** Distribuição praticamente 50/50.
 
 ---
 
@@ -146,7 +144,7 @@ DEBIT:   71.342 (50.02%)  ██████████████████
 ### Checklist de Integridade
 
 - [x] Todos os saldos batem com os cálculos (CREDIT - DEBIT)
-- [x] Total de transações no DB = Total de transações bem-sucedidas no k6
+- [x] Total de transações no DB = Total de transações bem-sucedidas
 - [x] Nenhuma transação duplicada (versões incrementais)
 - [x] Soma total dos saldos finais = Saldo inicial + Variação líquida
 - [x] Distribuição uniforme entre contas (~20% cada)
@@ -206,11 +204,11 @@ GROUP BY account_id, balance;
 
 | Aspecto | Status | Detalhes |
 |---------|--------|----------|
-| **Integridade Matemática** | ✅ PASS | Todos os saldos corretos |
-| **Consistência Transacional** | ✅ PASS | 142.591 transações registradas |
-| **Optimistic Locking** | ✅ PASS | Versões incrementais corretas |
-| **Distribuição de Carga** | ✅ PASS | Uniforme entre contas |
-| **Proteção contra Race Conditions** | ✅ PASS | 826 conflitos detectados e tratados |
+| **Integridade Matemática** | PASS | Todos os saldos corretos |
+| **Consistência Transacional** | PASS | 142.591 transações registradas |
+| **Optimistic Locking** | PASS | Versões incrementais corretas |
+| **Distribuição de Carga** | PASS | Uniforme entre contas |
+| **Proteção contra Race Conditions** | PASS | 826 conflitos detectados e tratados |
 
 ### Métricas de Qualidade
 
@@ -237,11 +235,5 @@ O sistema demonstrou capacidade de:
 
 **Validado por:** msvidal  
 **Data:** 2025-12-20  
-**Status:** ✅ **APROVADO - SISTEMA CERTIFICADO**
 
 ---
-
-## 📚 Referências
-
-- [Relatório do Teste de Carga](2025-12-20-pool-accounts.md)
-- [Script k6 Utilizado](../scripts/load-simple-saldo-test.js)
