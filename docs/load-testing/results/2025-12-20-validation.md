@@ -141,22 +141,6 @@ DEBIT:   71.342 (50.02%)  ██████████████████
 
 ---
 
-## 🎯 Validação de Optimistic Locking
-
-### Estatísticas de Versão
-
-| Conta | Versão Final | Transações | Versão = Transações?  |
-|-------|--------------|------------|---------------------|
-| Conta 1 | 28.391 | 28.391 | ✅ Correto |
-| Conta 2 | 28.431 | 28.431 | ✅ Correto |
-| Conta 3 | 28.554 | 28.554 | ✅ Correto |
-| Conta 4 | 28.537 | 28.537 | ✅ Correto |
-| Conta 5 | 28.678 | 28.678 | ✅ Correto |
-
-**Conclusão:** Cada transação bem-sucedida incrementou a versão corretamente. O mecanismo de Optimistic Locking está funcionando perfeitamente! ✅
-
----
-
 ## 🔐 Validação de Integridade Transacional
 
 ### Checklist de Integridade
@@ -237,16 +221,6 @@ GROUP BY account_id, balance;
 
 ---
 
-## 🎉 Certificação
-
-**Certifico que o sistema de transações passou em TODOS os testes de integridade.**
-
-- ✅ Zero discrepâncias financeiras
-- ✅ Proteção efetiva contra race conditions
-- ✅ Optimistic locking funcionando corretamente
-- ✅ Alta performance (1. 194 req/s) com integridade garantida
-- ✅ Sistema pronto para produção
-
 ### Performance com Integridade
 
 O sistema demonstrou capacidade de:
@@ -255,6 +229,9 @@ O sistema demonstrou capacidade de:
 - Detectar e rejeitar **826 conflitos** de concorrência
 - Suportar **~1.200 req/s** com 50 VUs
 - Garantir **consistência eventual** sob alta carga
+- Proteção efetiva contra race conditions
+- Optimistic locking funcionando corretamente
+- Alta performance (1.194 req/s) com integridade garantida
 
 ---
 
