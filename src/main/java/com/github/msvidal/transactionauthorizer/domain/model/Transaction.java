@@ -1,5 +1,6 @@
 package com.github.msvidal.transactionauthorizer.domain.model;
 
+import javax.money.MonetaryAmount;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;

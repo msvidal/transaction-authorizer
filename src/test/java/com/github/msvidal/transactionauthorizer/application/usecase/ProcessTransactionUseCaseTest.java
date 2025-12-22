@@ -145,7 +145,7 @@ class ProcessTransactionUseCaseTest {
         return new Account(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                new MonetaryAmount(initialBalance, Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(initialBalance, "BRL"),
                 OffsetDateTime.now(),
                 "ENABLED"
         );
@@ -155,7 +155,7 @@ class ProcessTransactionUseCaseTest {
         return new Transaction(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                new MonetaryAmount(amount, Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(amount, "BRL"),
                 transactionType,
                 null,
                 OffsetDateTime.now()

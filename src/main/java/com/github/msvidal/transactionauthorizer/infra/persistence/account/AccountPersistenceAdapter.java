@@ -1,13 +1,12 @@
 package com.github.msvidal.transactionauthorizer.infra.persistence.account;
 
 import com.github.msvidal.transactionauthorizer.domain.model.Account;
-import com.github.msvidal.transactionauthorizer.domain.model.MonetaryAmount;
 import com.github.msvidal.transactionauthorizer.domain.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Currency;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +27,7 @@ public class AccountPersistenceAdapter implements AccountRepository {
         var accountEntity = accountJpaRepository
                 .findById(account.id())
                 .orElseThrow(RuntimeException::new);
-        accountEntity.setBalance(account.balance().value());
+        accountEntity.setBalance(account.balance().getNumber().numberValue(java.math.BigDecimal.class));
         AccountEntity updated = accountJpaRepository.save(accountEntity);
         return toDomain(updated);
     }
@@ -42,8 +41,8 @@ public class AccountPersistenceAdapter implements AccountRepository {
         AccountEntity entity = new AccountEntity();
         entity.setId(account.id());
         entity.setOwner(account.owner());
-        entity.setBalance(account.balance().value());
-        entity.setCurrency(account.balance().currency().getCurrencyCode());
+        entity.setBalance(account.balance().getNumber().numberValue(java.math.BigDecimal.class));
+        entity.setCurrency(account.balance().getCurrency().getCurrencyCode());
         entity.setCreatedAt(account.createdAt());
         entity.setStatus(account.status());
         return entity;
@@ -53,7 +52,7 @@ public class AccountPersistenceAdapter implements AccountRepository {
         return new Account(
                 accountEntity.getId(),
                 accountEntity.getOwner(),
-                new MonetaryAmount(accountEntity.getBalance(), Currency.getInstance(accountEntity.getCurrency())),
+                Money.of(accountEntity.getBalance(), accountEntity.getCurrency()),
                 accountEntity.getCreatedAt(),
                 accountEntity.getStatus()
         );

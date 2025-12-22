@@ -1,12 +1,11 @@
 package com.github.msvidal.transactionauthorizer.infra.persistence.transaction;
 
-import com.github.msvidal.transactionauthorizer.domain.model.MonetaryAmount;
 import com.github.msvidal.transactionauthorizer.domain.model.Transaction;
 import com.github.msvidal.transactionauthorizer.domain.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
-import java.util.Currency;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,8 +32,8 @@ public class TransactionPersistenceAdapter implements TransactionRepository {
         entity.setId(transaction.id());
         entity.setAccountId(transaction.accountId());
         entity.setOperation(transaction.operation());
-        entity.setAmount(transaction.amount().value());
-        entity.setCurrency(transaction.amount().currency().getCurrencyCode());
+        entity.setAmount(transaction.amount().getNumber().numberValue(java.math.BigDecimal.class));
+        entity.setCurrency(transaction.amount().getCurrency().getCurrencyCode());
         entity.setStatus(transaction.status());
         entity.setCreatedAt(OffsetDateTime.now());
         return entity;
@@ -44,7 +43,7 @@ public class TransactionPersistenceAdapter implements TransactionRepository {
         return new Transaction(
                 entity.getId(),
                 entity.getAccountId(),
-                new MonetaryAmount(entity.getAmount(), Currency.getInstance(entity.getCurrency())),
+                Money.of(entity.getAmount(), entity.getCurrency()),
                 entity.getOperation(),
                 entity.getStatus(),
                 entity.getCreatedAt()

@@ -1,9 +1,11 @@
 package com.github.msvidal.transactionauthorizer.domain.model;
 
+import org.javamoney.moneta.Money;
+
+import javax.money.MonetaryAmount;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Currency;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -12,7 +14,7 @@ public record Account(UUID id, UUID owner, MonetaryAmount balance, OffsetDateTim
     public Account {
         Objects.requireNonNull(id, "id is required");
         if (balance == null) {
-            balance = new MonetaryAmount(BigDecimal.ZERO, Currency.getInstance("BRL"));
+            balance = Money.of(BigDecimal.ZERO, "BRL");
         }
         if (createdAt == null) createdAt = OffsetDateTime.now(ZoneOffset.ofHours(-3));
         if (status == null) status = "ENABLED";
@@ -20,15 +22,18 @@ public record Account(UUID id, UUID owner, MonetaryAmount balance, OffsetDateTim
 
     public Account credit(BigDecimal amount) {
         validateAmount(amount);
-        return new Account(id, owner, balance.add(amount), createdAt, status);
+        MonetaryAmount newBalance = balance.add(Money.of(amount, balance.getCurrency()));
+        return new Account(id, owner, newBalance, createdAt, status);
     }
 
     public Account debit(BigDecimal amount) {
         validateAmount(amount);
-        if (balance.compareTo(amount) < 0) {
+        BigDecimal balanceValue = balance.getNumber().numberValue(BigDecimal.class);
+        if (balanceValue.compareTo(amount) < 0) {
             throw new RuntimeException("Saldo insuficiente");
         }
-        return new Account(id, owner, balance.subtract(amount), createdAt, status);
+        MonetaryAmount newBalance = balance.subtract(Money.of(amount, balance.getCurrency()));
+        return new Account(id, owner, newBalance, createdAt, status);
     }
 
     private static void validateAmount(BigDecimal amount) {
@@ -37,7 +42,8 @@ public record Account(UUID id, UUID owner, MonetaryAmount balance, OffsetDateTim
     }
 
     public boolean hasSufficientBalance(BigDecimal amount) {
-        return balance.compareTo(amount) >= 0;
+        BigDecimal balanceValue = balance.getNumber().numberValue(BigDecimal.class);
+        return balanceValue.compareTo(amount) >= 0;
     }
 }
 

@@ -1,6 +1,5 @@
 package com.github.msvidal.transactionauthorizer.infra.api;
 
-import com.github.msvidal.transactionauthorizer.domain.model.MonetaryAmount;
 import com.github.msvidal.transactionauthorizer.domain.model.Transaction;
 import com.github.msvidal.transactionauthorizer.domain.model.TransactionType;
 import com.github.msvidal.transactionauthorizer.application.usecase.ProcessTransactionUseCase;
@@ -15,10 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.javamoney.moneta.Money;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Currency;
 import java.util.UUID;
 
 @RestController
@@ -54,13 +53,13 @@ public class TransactionController {
                 request.operation());
 
         var amount = request.amount().value();
-        var currency = Currency.getInstance(request.amount().currency());
+        var currency = request.amount().currency();
         var operation = TransactionType.fromString(request.operation());
 
         var transaction = new Transaction(
                 transactionId,
                 request.accountId(),
-                new MonetaryAmount(amount, currency),
+                Money.of(amount, currency),
                 operation,
                 null,
                 null

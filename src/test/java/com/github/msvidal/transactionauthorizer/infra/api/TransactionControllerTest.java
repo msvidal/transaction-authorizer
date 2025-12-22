@@ -60,7 +60,7 @@ class TransactionControllerTest {
         Account account = new Account(
                 accountId,
                 UUID.randomUUID(),
-                new MonetaryAmount(new BigDecimal("950.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("950.00"), "BRL"),
                 OffsetDateTime.now(),
                 "ENABLED"
         );
@@ -68,7 +68,7 @@ class TransactionControllerTest {
         Transaction transaction = new Transaction(
                 transactionId,
                 accountId,
-                new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("50.00"), "BRL"),
                 TransactionType.DEBIT,
                 Status.SUCCEEDED,
                 OffsetDateTime.now()
@@ -108,7 +108,7 @@ class TransactionControllerTest {
         Account account = new Account(
                 accountId,
                 UUID.randomUUID(),
-                new MonetaryAmount(new BigDecimal("1200.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("1200.00"), "BRL"),
                 OffsetDateTime.now(),
                 "ENABLED"
         );
@@ -116,7 +116,7 @@ class TransactionControllerTest {
         Transaction transaction = new Transaction(
                 transactionId,
                 accountId,
-                new MonetaryAmount(new BigDecimal("200.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("200.00"), "BRL"),
                 TransactionType.CREDIT,
                 Status.SUCCEEDED,
                 OffsetDateTime.now()
@@ -151,7 +151,7 @@ class TransactionControllerTest {
         Transaction failedTransaction = new Transaction(
                 transactionId,
                 accountId,
-                new MonetaryAmount(new BigDecimal("100.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("100.00"), "BRL"),
                 TransactionType.DEBIT,
                 Status.FAILED,
                 OffsetDateTime.now()
@@ -294,7 +294,7 @@ class TransactionControllerTest {
         Account account = new Account(
                 accountId,
                 UUID.randomUUID(),
-                new MonetaryAmount(new BigDecimal("950.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("950.00"), "BRL"),
                 OffsetDateTime.now(),
                 "ENABLED"
         );
@@ -302,7 +302,7 @@ class TransactionControllerTest {
         Transaction transaction = new Transaction(
                 transactionId,
                 accountId,
-                new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("50.00"), "BRL"),
                 TransactionType.DEBIT,
                 Status.SUCCEEDED,
                 OffsetDateTime.now()
@@ -335,7 +335,7 @@ class TransactionControllerTest {
         Account account = new Account(
                 accountId,
                 UUID.randomUUID(),
-                new MonetaryAmount(new BigDecimal("950.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("950.00"), "BRL"),
                 OffsetDateTime.now(),
                 "ENABLED"
         );
@@ -343,7 +343,7 @@ class TransactionControllerTest {
         Transaction existingTransaction = new Transaction(
                 transactionId,
                 accountId,
-                new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
+                org.javamoney.moneta.Money.of(new BigDecimal("50.00"), "BRL"),
                 TransactionType.DEBIT,
                 Status.SUCCEEDED,
                 OffsetDateTime.now()
@@ -377,7 +377,7 @@ class TransactionControllerTest {
         Account account = new Account(
                 accountId,
                 UUID.randomUUID(),
-                new MonetaryAmount(new BigDecimal("1100.00"), Currency.getInstance("USD")),
+                org.javamoney.moneta.Money.of(new BigDecimal("1100.00"), "USD"),
                 OffsetDateTime.now(),
                 "ENABLED"
         );
@@ -385,7 +385,7 @@ class TransactionControllerTest {
         Transaction transaction = new Transaction(
                 transactionId,
                 accountId,
-                new MonetaryAmount(new BigDecimal("100.00"), Currency.getInstance("USD")),
+                org.javamoney.moneta.Money.of(new BigDecimal("100.00"), "USD"),
                 TransactionType.CREDIT,
                 Status.SUCCEEDED,
                 OffsetDateTime.now()

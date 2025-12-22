@@ -1,7 +1,6 @@
 package com.github.msvidal.transactionauthorizer.application.usecase;
 
 import com.github.msvidal.transactionauthorizer.domain.model.Account;
-import com.github.msvidal.transactionauthorizer.domain.model.MonetaryAmount;
 import com.github.msvidal.transactionauthorizer.domain.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Currency;
 import java.util.UUID;
 import static org.mockito.Mockito.*;
 
@@ -51,8 +49,7 @@ class CreateAccountUseCaseTest {
     }
 
     private static Account getAccount(BigDecimal initialBalance) {
-        return new Account(UUID.randomUUID(), UUID.randomUUID(), new MonetaryAmount(initialBalance,
-                Currency.getInstance("BRL")), OffsetDateTime.now(), "ENABLED");
+        return new Account(UUID.randomUUID(), UUID.randomUUID(), org.javamoney.moneta.Money.of(initialBalance, "BRL"), OffsetDateTime.now(), "ENABLED");
     }
 }
 

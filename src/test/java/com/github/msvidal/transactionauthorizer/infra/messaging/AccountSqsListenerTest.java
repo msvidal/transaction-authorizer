@@ -64,7 +64,7 @@ class AccountSqsListenerTest {
         Account captured = captor.getValue();
         assertThat(captured.id()).isEqualTo(dto.id());
         assertThat(captured.owner()).isEqualTo(dto.owner());
-        assertThat(captured.balance().value()).isEqualByComparingTo(dto.balance());
+        assertThat(captured.balance().getNumber().numberValue(BigDecimal.class)).isEqualByComparingTo(dto.balance());
         assertThat(captured.status()).isEqualTo("ENABLED");
     }
 
@@ -125,7 +125,7 @@ class AccountSqsListenerTest {
         verify(createAccountUseCase, times(1)).execute(captor.capture());
 
         Account captured = captor.getValue();
-        assertThat(captured.balance().value()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(captured.balance().getNumber().numberValue(BigDecimal.class)).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(captured.status()).isEqualTo("ENABLED");
     }
 

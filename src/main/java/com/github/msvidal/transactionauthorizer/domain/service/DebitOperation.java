@@ -2,9 +2,11 @@ package com.github.msvidal.transactionauthorizer.domain.service;
 
 import com.github.msvidal.transactionauthorizer.domain.exception.InsufficientBalanceException;
 import com.github.msvidal.transactionauthorizer.domain.model.Account;
-import com.github.msvidal.transactionauthorizer.domain.model.MonetaryAmount;
 import com.github.msvidal.transactionauthorizer.domain.model.TransactionType;
 import org.springframework.stereotype.Component;
+
+import javax.money.MonetaryAmount;
+import java.math.BigDecimal;
 
 @Component
 public class DebitOperation implements TransactionOperation {
@@ -15,9 +17,10 @@ public class DebitOperation implements TransactionOperation {
     }
 
     public Account execute(Account account, MonetaryAmount amount) {
-        if (!account.hasSufficientBalance(amount.value())) {
+        BigDecimal value = amount.getNumber().numberValue(BigDecimal.class);
+        if (!account.hasSufficientBalance(value)) {
             throw new InsufficientBalanceException("Saldo insuficiente para realizar a operação");
         }
-        return account.debit(amount.value());
+        return account.debit(value);
     }
 }

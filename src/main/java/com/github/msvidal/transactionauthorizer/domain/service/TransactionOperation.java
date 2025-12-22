@@ -1,7 +1,8 @@
 package com.github.msvidal.transactionauthorizer.domain.service;
 
 import com.github.msvidal.transactionauthorizer.domain.model.Account;
-import com.github.msvidal.transactionauthorizer.domain.model.MonetaryAmount;
+
+import javax.money.MonetaryAmount;
 
 public interface TransactionOperation {
     String getTransactionType();

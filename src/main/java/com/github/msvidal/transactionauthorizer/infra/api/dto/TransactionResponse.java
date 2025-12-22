@@ -4,6 +4,8 @@ import com.github.msvidal.transactionauthorizer.domain.model.Account;
 import com.github.msvidal.transactionauthorizer.domain.model.Transaction;
 import com.github.msvidal.transactionauthorizer.domain.model.TransactionResult;
 
+import java.math.BigDecimal;
+
 public record TransactionResponse(
         TransactionDto transaction,
         AccountDto account
@@ -17,10 +19,12 @@ public record TransactionResponse(
     }
 
     private static TransactionDto toTransactionDto(Transaction transaction) {
+        BigDecimal value = transaction.amount().getNumber().numberValue(BigDecimal.class);
+        String currencyCode = transaction.amount().getCurrency().getCurrencyCode();
         return new TransactionDto(
                 transaction.id(),
                 transaction.operation().name(),
-                new AmountDto(transaction.amount().value(), transaction.amount().currency().getCurrencyCode()),
+                new AmountDto(value, currencyCode),
                 transaction.status().name(),
                 transaction.createdAt());
     }
@@ -29,8 +33,10 @@ public record TransactionResponse(
         if (account == null) {
             return null;
         }
+        BigDecimal value = account.balance().getNumber().numberValue(BigDecimal.class);
+        String currencyCode = account.balance().getCurrency().getCurrencyCode();
         return new AccountDto(account.id(),
-                new AmountDto(account.balance().value(), account.balance().currency().getCurrencyCode())
+                new AmountDto(value, currencyCode)
         );
     }
 }
