@@ -13,14 +13,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Currency;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -404,4 +409,143 @@ class TransactionControllerTest {
 
         verify(processTransactionUseCase, times(1)).execute(any(Transaction.class));
     }
+
+    @Test
+    void shouldReturnDatesInIso8601() throws Exception {
+        UUID transactionId = UUID.randomUUID();
+        UUID accountId = UUID.randomUUID();
+
+        TransactionRequest request = new TransactionRequest(
+                accountId,
+                new TransactionAmountRequest(new BigDecimal("50.00"), "BRL"),
+                "DEBIT"
+        );
+
+        Account account = new Account(
+                accountId,
+                UUID.randomUUID(),
+                new MonetaryAmount(new BigDecimal("950.00"), Currency.getInstance("BRL")),
+                OffsetDateTime.now(),
+                "ENABLED"
+        );
+
+        Transaction transaction = new Transaction(
+                transactionId,
+                accountId,
+                new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
+                TransactionType.DEBIT,
+                Status.SUCCEEDED,
+                OffsetDateTime.now()
+        );
+
+        TransactionResult result = new TransactionResult(transaction, account);
+
+        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+
+        MvcResult mvcResult = mockMvc.perform(post("/transactions/{transactionId}", transactionId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+        assertIso8601DatesInResponse(content);
+    }
+
+    @Test
+    void shouldReturnValidIso4217AndPositiveAmounts() throws Exception {
+        UUID transactionId = UUID.randomUUID();
+        UUID accountId = UUID.randomUUID();
+
+        TransactionRequest request = new TransactionRequest(
+                accountId,
+                new TransactionAmountRequest(new BigDecimal("50.00"), "BRL"),
+                "DEBIT"
+        );
+
+        Account account = new Account(
+                accountId,
+                UUID.randomUUID(),
+                new MonetaryAmount(new BigDecimal("950.00"), Currency.getInstance("BRL")),
+                OffsetDateTime.now(),
+                "ENABLED"
+        );
+
+        Transaction transaction = new Transaction(
+                transactionId,
+                accountId,
+                new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
+                TransactionType.DEBIT,
+                Status.SUCCEEDED,
+                OffsetDateTime.now()
+        );
+
+        TransactionResult result = new TransactionResult(transaction, account);
+
+        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+
+        MvcResult mvcResult = mockMvc.perform(post("/transactions/{transactionId}", transactionId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        assertIso4217CurrenciesInResponse(content);
+        assertPositiveAmountsInResponse(content);
+    }
+
+    private void assertIso4217CurrenciesInResponse(String json) {
+        Pattern pattern = Pattern.compile("\"currency\"\\s*:\\s*\"([A-Z]{3})\"");
+        Matcher matcher = pattern.matcher(json);
+        boolean found = false;
+        while (matcher.find()) {
+            found = true;
+            String code = matcher.group(1);
+            try {
+                Currency.getInstance(code);
+            } catch (IllegalArgumentException e) {
+                fail("Código de moeda inválido: " + code);
+            }
+        }
+        if (!found) {
+            fail("Nenhum código de moeda ISO‑4217 encontrado na resposta");
+        }
+    }
+
+    private void assertPositiveAmountsInResponse(String json) {
+        Pattern pattern = Pattern.compile("\"amount\"\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)");
+        Matcher matcher = pattern.matcher(json);
+        boolean found = false;
+        while (matcher.find()) {
+            found = true;
+            BigDecimal value = new BigDecimal(matcher.group(1));
+            if (value.compareTo(BigDecimal.ZERO) <= 0) {
+                fail("Valor não positivo encontrado: " + value);
+            }
+        }
+        if (!found) {
+            fail("Nenhum valor numérico de `amount` encontrado na resposta");
+        }
+    }
+
+    private void assertIso8601DatesInResponse(String json) {
+        Pattern pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})");
+        Matcher matcher = pattern.matcher(json);
+        boolean found = false;
+        while (matcher.find()) {
+            found = true;
+            String dateStr = matcher.group();
+            try {
+                OffsetDateTime.parse(dateStr);
+            } catch (DateTimeParseException e) {
+                fail("Data não está em ISO8601: " + dateStr);
+            }
+        }
+        if (!found) {
+            fail("Nenhuma data no formato ISO8601 encontrada na resposta");
+        }
+    }
+
 }
