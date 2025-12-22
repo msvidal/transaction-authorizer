@@ -28,7 +28,7 @@ public record Account(UUID id, UUID owner, MonetaryAmount balance, OffsetDateTim
 
     public Account debit(BigDecimal amount) {
         validateAmount(amount);
-        BigDecimal balanceValue = balance.getNumber().numberValue(BigDecimal.class);
+        BigDecimal balanceValue = getBalanceValue();
         if (balanceValue.compareTo(amount) < 0) {
             throw new RuntimeException("Saldo insuficiente");
         }
@@ -42,8 +42,11 @@ public record Account(UUID id, UUID owner, MonetaryAmount balance, OffsetDateTim
     }
 
     public boolean hasSufficientBalance(BigDecimal amount) {
-        BigDecimal balanceValue = balance.getNumber().numberValue(BigDecimal.class);
-        return balanceValue.compareTo(amount) >= 0;
+        return getBalanceValue().compareTo(amount) >= 0;
+    }
+
+    private BigDecimal getBalanceValue() {
+        return balance.getNumber().numberValue(BigDecimal.class);
     }
 }
 

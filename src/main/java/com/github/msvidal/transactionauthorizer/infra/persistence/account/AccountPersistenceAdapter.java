@@ -7,6 +7,7 @@ import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class AccountPersistenceAdapter implements AccountRepository {
         var accountEntity = accountJpaRepository
                 .findById(account.id())
                 .orElseThrow(RuntimeException::new);
-        accountEntity.setBalance(account.balance().getNumber().numberValue(java.math.BigDecimal.class));
+        accountEntity.setBalance(account.balance().getNumber().numberValue(BigDecimal.class));
         AccountEntity updated = accountJpaRepository.save(accountEntity);
         return toDomain(updated);
     }
@@ -41,7 +42,7 @@ public class AccountPersistenceAdapter implements AccountRepository {
         AccountEntity entity = new AccountEntity();
         entity.setId(account.id());
         entity.setOwner(account.owner());
-        entity.setBalance(account.balance().getNumber().numberValue(java.math.BigDecimal.class));
+        entity.setBalance(account.balance().getNumber().numberValue(BigDecimal.class));
         entity.setCurrency(account.balance().getCurrency().getCurrencyCode());
         entity.setCreatedAt(account.createdAt());
         entity.setStatus(account.status());

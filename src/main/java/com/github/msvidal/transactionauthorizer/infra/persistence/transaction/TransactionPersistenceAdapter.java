@@ -5,6 +5,7 @@ import com.github.msvidal.transactionauthorizer.domain.repository.TransactionRep
 import lombok.RequiredArgsConstructor;
 import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Component;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,7 +33,7 @@ public class TransactionPersistenceAdapter implements TransactionRepository {
         entity.setId(transaction.id());
         entity.setAccountId(transaction.accountId());
         entity.setOperation(transaction.operation());
-        entity.setAmount(transaction.amount().getNumber().numberValue(java.math.BigDecimal.class));
+        entity.setAmount(transaction.amount().getNumber().numberValue(BigDecimal.class));
         entity.setCurrency(transaction.amount().getCurrency().getCurrencyCode());
         entity.setStatus(transaction.status());
         entity.setCreatedAt(OffsetDateTime.now());
