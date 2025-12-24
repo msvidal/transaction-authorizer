@@ -17,7 +17,7 @@ import java.net.URI;
 
 @Slf4j
 @Configuration
-@Profile({"listener","local"})
+@Profile({"listener","local","api"})
 public class SqsConfig {
 
     @Value("${aws.sqs.endpoint:}")

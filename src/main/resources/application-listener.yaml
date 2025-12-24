@@ -37,6 +37,17 @@ aws:
   sqs:
     endpoint: http://localstack:4566
     queue-name: conta-bancaria-criada
+    capture-queue-name: transaction-capture-queue
+    capture-dlq-name: transaction-capture-dlq
+
+webhook:
+  enabled: true
+  url: ${WEBHOOK_URL:http://api:8080/webhook-test}
+  secret: ${WEBHOOK_SECRET:super-secret-key-change-in-production}
+  retry:
+    max-attempts: 3
+    backoff-ms: 1000
+  timeout-ms: 5000
 
 management:
   endpoints:
