@@ -13,6 +13,12 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @deprecated Use {@link AuthorizeTransactionUseCase} and {@link CaptureTransactionUseCase} 
+ * for the new Auth & Capture asynchronous pattern. This class is maintained for backward 
+ * compatibility with existing synchronous flows.
+ */
+@Deprecated
 @Service
 @AllArgsConstructor
 public class ProcessTransactionUseCase {

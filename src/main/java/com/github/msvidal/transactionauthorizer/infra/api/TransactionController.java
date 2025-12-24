@@ -3,7 +3,7 @@ package com.github.msvidal.transactionauthorizer.infra.api;
 import com.github.msvidal.transactionauthorizer.domain.model.MonetaryAmount;
 import com.github.msvidal.transactionauthorizer.domain.model.Transaction;
 import com.github.msvidal.transactionauthorizer.domain.model.TransactionType;
-import com.github.msvidal.transactionauthorizer.application.usecase.ProcessTransactionUseCase;
+import com.github.msvidal.transactionauthorizer.application.usecase.AuthorizeTransactionUseCase;
 import com.github.msvidal.transactionauthorizer.infra.api.dto.TransactionRequest;
 import com.github.msvidal.transactionauthorizer.infra.api.dto.TransactionResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,18 +29,18 @@ import java.util.UUID;
 @Profile({"api","local"})
 public class TransactionController {
 
-    private final ProcessTransactionUseCase processTransactionUseCase;
+    private final AuthorizeTransactionUseCase authorizeTransactionUseCase;
 
     @Operation(
             summary = "Autorizar transação",
-            description = "Processa uma operação de débito ou crédito em conta de forma idempotente."
+            description = "Processa uma operação de débito ou crédito em conta de forma idempotente usando o padrão Auth & Capture assíncrono."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Transação processada (Aprovada ou Recusada)",
+            @ApiResponse(responseCode = "200", description = "Transação autorizada (processamento assíncrono enfileirado)",
                     content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
             @ApiResponse(responseCode = "400", description = "Dados inválidos na requisição"),
-            @ApiResponse(responseCode = "404", description = "Conta não encontrada (se configurado para lançar erro)"),
-            @ApiResponse(responseCode = "422", description = "Erro de negócio (ex: Saldo insuficiente, se não tratado como 200)")
+            @ApiResponse(responseCode = "404", description = "Conta não encontrada"),
+            @ApiResponse(responseCode = "422", description = "Erro de negócio (ex: Saldo insuficiente)")
     })
     @PostMapping("/{transactionId}")
     public ResponseEntity<TransactionResponse> authorize(
@@ -66,14 +66,14 @@ public class TransactionController {
                 null
         );
 
-        var transactionResult = processTransactionUseCase.execute(transaction);
+        var transactionResult = authorizeTransactionUseCase.execute(transaction);
 
         if (transactionResult == null) {
             log.warn("Use case retornou null para a transação ID: {}", transactionId);
             return ResponseEntity.badRequest().build();
         }
 
-        TransactionResponse response = TransactionResponse.toResponse(transactionResult);
+        TransactionResponse response = TransactionResponse.toResponse(transactionResult, true);
 
         log.info("Transação processada - ID: {}, Status: {}", transactionId, response.transaction().status());
 

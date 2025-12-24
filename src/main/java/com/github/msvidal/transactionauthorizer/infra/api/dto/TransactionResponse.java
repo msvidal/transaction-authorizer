@@ -6,13 +6,19 @@ import com.github.msvidal.transactionauthorizer.domain.model.TransactionResult;
 
 public record TransactionResponse(
         TransactionDto transaction,
-        AccountDto account
+        AccountDto account,
+        boolean webhookNotification
 ) {
 
     public static TransactionResponse toResponse(TransactionResult result) {
+        return toResponse(result, false);
+    }
+
+    public static TransactionResponse toResponse(TransactionResult result, boolean webhookNotification) {
         return new TransactionResponse(
                 toTransactionDto(result.transaction()),
-                toAccountDto(result.account())
+                toAccountDto(result.account()),
+                webhookNotification
         );
     }
 

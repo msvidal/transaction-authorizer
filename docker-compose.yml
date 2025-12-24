@@ -80,6 +80,8 @@ services:
       localstack:
         condition: service_healthy
         restart: true
+      sqs-init:
+        condition: service_completed_successfully
     environment:
       # SQS settings
       - QUEUE_NAME=conta-bancaria-criada
@@ -105,6 +107,36 @@ services:
         go run message-generator.go
       "
     working_dir: /home
+
+  sqs-init:
+    image: amazon/aws-cli:latest
+    container_name: sqs-init
+    networks:
+      - transaction-net
+    depends_on:
+      localstack:
+        condition: service_healthy
+        restart: true
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=sa-east-1
+    command: >
+      /bin/sh -c "
+        echo 'Creating transaction capture queue...' &&
+        aws --endpoint-url=http://localstack:4566 sqs create-queue \
+          --queue-name transaction-capture-queue \
+          --attributes VisibilityTimeout=30,MessageRetentionPeriod=86400 &&
+        echo 'Creating transaction capture DLQ...' &&
+        aws --endpoint-url=http://localstack:4566 sqs create-queue \
+          --queue-name transaction-capture-dlq \
+          --attributes MessageRetentionPeriod=1209600 &&
+        echo 'Configuring redrive policy...' &&
+        aws --endpoint-url=http://localstack:4566 sqs set-queue-attributes \
+          --queue-url http://localstack:4566/000000000000/transaction-capture-queue \
+          --attributes '{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"arn:aws:sqs:sa-east-1:000000000000:transaction-capture-dlq\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}' &&
+        echo 'SQS queues configured successfully!'
+      "
 
   api:
     build:
