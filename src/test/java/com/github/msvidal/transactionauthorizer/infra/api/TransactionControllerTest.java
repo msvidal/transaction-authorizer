@@ -1,7 +1,7 @@
 package com.github.msvidal.transactionauthorizer.infra.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.msvidal.transactionauthorizer.application.usecase.ProcessTransactionUseCase;
+import com.github.msvidal.transactionauthorizer.application.usecase.AuthorizeTransactionUseCase;
 import com.github.msvidal.transactionauthorizer.domain.model.*;
 import com.github.msvidal.transactionauthorizer.infra.api.dto.TransactionAmountRequest;
 import com.github.msvidal.transactionauthorizer.infra.api.dto.TransactionRequest;
@@ -39,7 +39,7 @@ class TransactionControllerTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private ProcessTransactionUseCase processTransactionUseCase;
+    private AuthorizeTransactionUseCase authorizeTransactionUseCase;
 
     @InjectMocks
     private TransactionController transactionController;
@@ -75,13 +75,13 @@ class TransactionControllerTest {
                 accountId,
                 new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
                 TransactionType.DEBIT,
-                Status.SUCCEEDED,
+                Status.AUTHORIZED,
                 OffsetDateTime.now()
         );
 
         TransactionResult result = new TransactionResult(transaction, account);
 
-        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+        when(authorizeTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
 
         mockMvc.perform(post("/transactions/{transactionId}", transactionId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -89,14 +89,14 @@ class TransactionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transaction.id").value(transactionId.toString()))
                 .andExpect(jsonPath("$.transaction.type").value("DEBIT"))
-                .andExpect(jsonPath("$.transaction.status").value("SUCCEEDED"))
+                .andExpect(jsonPath("$.transaction.status").value("AUTHORIZED"))
                 .andExpect(jsonPath("$.transaction.amount.amount").value(50.00))
                 .andExpect(jsonPath("$.transaction.amount.currency").value("BRL"))
                 .andExpect(jsonPath("$.account.id").value(accountId.toString()))
                 .andExpect(jsonPath("$.account.balance.amount").value(950.00))
                 .andExpect(jsonPath("$.account.balance.currency").value("BRL"));
 
-        verify(processTransactionUseCase, times(1)).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, times(1)).execute(any(Transaction.class));
     }
 
     @Test
@@ -123,23 +123,23 @@ class TransactionControllerTest {
                 accountId,
                 new MonetaryAmount(new BigDecimal("200.00"), Currency.getInstance("BRL")),
                 TransactionType.CREDIT,
-                Status.SUCCEEDED,
+                Status.AUTHORIZED,
                 OffsetDateTime.now()
         );
 
         TransactionResult result = new TransactionResult(transaction, account);
 
-        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+        when(authorizeTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
 
         mockMvc.perform(post("/transactions/{transactionId}", transactionId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transaction.type").value("CREDIT"))
-                .andExpect(jsonPath("$.transaction.status").value("SUCCEEDED"))
+                .andExpect(jsonPath("$.transaction.status").value("AUTHORIZED"))
                 .andExpect(jsonPath("$.account.balance.amount").value(1200.00));
 
-        verify(processTransactionUseCase, times(1)).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, times(1)).execute(any(Transaction.class));
     }
 
     @Test
@@ -164,7 +164,7 @@ class TransactionControllerTest {
 
         TransactionResult result = new TransactionResult(failedTransaction, null);
 
-        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+        when(authorizeTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
 
         mockMvc.perform(post("/transactions/{transactionId}", transactionId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -173,7 +173,7 @@ class TransactionControllerTest {
                 .andExpect(jsonPath("$.transaction.status").value("FAILED"))
                 .andExpect(jsonPath("$.account").value(nullValue()));
 
-        verify(processTransactionUseCase, times(1)).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, times(1)).execute(any(Transaction.class));
     }
 
     @Test
@@ -196,7 +196,7 @@ class TransactionControllerTest {
                         .content(invalidRequest))
                 .andExpect(status().isBadRequest());
 
-        verify(processTransactionUseCase, never()).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, never()).execute(any(Transaction.class));
     }
 
     @Test
@@ -215,7 +215,7 @@ class TransactionControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
 
-        verify(processTransactionUseCase, never()).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, never()).execute(any(Transaction.class));
     }
 
     @Test
@@ -234,7 +234,7 @@ class TransactionControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
 
-        verify(processTransactionUseCase, never()).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, never()).execute(any(Transaction.class));
     }
 
     @Test
@@ -258,7 +258,7 @@ class TransactionControllerTest {
                         .content(invalidRequest))
                 .andExpect(status().isBadRequest());
 
-        verify(processTransactionUseCase, never()).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, never()).execute(any(Transaction.class));
     }
 
     @Test
@@ -282,7 +282,7 @@ class TransactionControllerTest {
                         .content(invalidRequest))
                 .andExpect(status().isBadRequest());
 
-        verify(processTransactionUseCase, never()).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, never()).execute(any(Transaction.class));
     }
 
     @Test
@@ -309,21 +309,21 @@ class TransactionControllerTest {
                 accountId,
                 new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
                 TransactionType.DEBIT,
-                Status.SUCCEEDED,
+                Status.AUTHORIZED,
                 OffsetDateTime.now()
         );
 
         TransactionResult result = new TransactionResult(transaction, account);
 
-        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+        when(authorizeTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
 
         mockMvc.perform(post("/transactions/{transactionId}", transactionId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.transaction.status").value("SUCCEEDED"));
+                .andExpect(jsonPath("$.transaction.status").value("AUTHORIZED"));
 
-        verify(processTransactionUseCase, times(1)).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, times(1)).execute(any(Transaction.class));
     }
 
     @Test
@@ -350,22 +350,22 @@ class TransactionControllerTest {
                 accountId,
                 new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
                 TransactionType.DEBIT,
-                Status.SUCCEEDED,
+                Status.AUTHORIZED,
                 OffsetDateTime.now()
         );
 
         TransactionResult result = new TransactionResult(existingTransaction, account);
 
-        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+        when(authorizeTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
 
         mockMvc.perform(post("/transactions/{transactionId}", transactionId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transaction.id").value(transactionId.toString()))
-                .andExpect(jsonPath("$.transaction.status").value("SUCCEEDED"));
+                .andExpect(jsonPath("$.transaction.status").value("AUTHORIZED"));
 
-        verify(processTransactionUseCase, times(1)).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, times(1)).execute(any(Transaction.class));
     }
 
     @Test
@@ -392,13 +392,13 @@ class TransactionControllerTest {
                 accountId,
                 new MonetaryAmount(new BigDecimal("100.00"), Currency.getInstance("USD")),
                 TransactionType.CREDIT,
-                Status.SUCCEEDED,
+                Status.AUTHORIZED,
                 OffsetDateTime.now()
         );
 
         TransactionResult result = new TransactionResult(transaction, account);
 
-        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+        when(authorizeTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
 
         mockMvc.perform(post("/transactions/{transactionId}", transactionId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -407,7 +407,7 @@ class TransactionControllerTest {
                 .andExpect(jsonPath("$.transaction.amount.currency").value("USD"))
                 .andExpect(jsonPath("$.account.balance.currency").value("USD"));
 
-        verify(processTransactionUseCase, times(1)).execute(any(Transaction.class));
+        verify(authorizeTransactionUseCase, times(1)).execute(any(Transaction.class));
     }
 
     @Test
@@ -434,13 +434,13 @@ class TransactionControllerTest {
                 accountId,
                 new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
                 TransactionType.DEBIT,
-                Status.SUCCEEDED,
+                Status.AUTHORIZED,
                 OffsetDateTime.now()
         );
 
         TransactionResult result = new TransactionResult(transaction, account);
 
-        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+        when(authorizeTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
 
         MvcResult mvcResult = mockMvc.perform(post("/transactions/{transactionId}", transactionId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -476,13 +476,13 @@ class TransactionControllerTest {
                 accountId,
                 new MonetaryAmount(new BigDecimal("50.00"), Currency.getInstance("BRL")),
                 TransactionType.DEBIT,
-                Status.SUCCEEDED,
+                Status.AUTHORIZED,
                 OffsetDateTime.now()
         );
 
         TransactionResult result = new TransactionResult(transaction, account);
 
-        when(processTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
+        when(authorizeTransactionUseCase.execute(any(Transaction.class))).thenReturn(result);
 
         MvcResult mvcResult = mockMvc.perform(post("/transactions/{transactionId}", transactionId)
                         .contentType(MediaType.APPLICATION_JSON)
