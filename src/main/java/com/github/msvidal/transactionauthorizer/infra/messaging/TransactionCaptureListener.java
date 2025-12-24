@@ -28,12 +28,14 @@ public class TransactionCaptureListener {
             
             JsonNode root = objectMapper.readTree(body);
             
-            // Handle both direct message and wrapped message formats
+            // Support two message formats:
+            // 1. Direct format: {"transactionId": "uuid"}
+            // 2. Wrapped format: {"transaction": {"transactionId": "uuid"}}
             JsonNode messageNode = root.has("transactionId") ? root : 
-                                  (root.has("transaction") ? root.get("transaction") : root);
+                                  (root.has("transaction") ? root.get("transaction") : null);
             
             if (messageNode == null || messageNode.isMissingNode() || messageNode.isNull()) {
-                log.error("Invalid message format: transactionId field not found");
+                log.error("Invalid message format: unable to locate transaction data in message");
                 return;
             }
 

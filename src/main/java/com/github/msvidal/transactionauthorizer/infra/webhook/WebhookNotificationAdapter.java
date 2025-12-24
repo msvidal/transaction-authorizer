@@ -58,6 +58,8 @@ public class WebhookNotificationAdapter implements WebhookNotificationService {
                 
                 if (attempt < maxAttempts) {
                     try {
+                        // Note: Using Thread.sleep() for simplicity. For production, consider using
+                        // asynchronous retry mechanisms like Spring Retry with @Async or reactive approaches
                         long sleepTime = backoffMs * (long) Math.pow(2, attempt - 1);
                         Thread.sleep(sleepTime);
                     } catch (InterruptedException ie) {
